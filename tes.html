@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Ketua OSIS - UPT SMPN 6 Gresik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        @keyframes bounce-in {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.05) rotate(5deg); }
+            70% { transform: scale(0.9) rotate(-2deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        .animate-bounce-in { animation: bounce-in 0.6s ease-out; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        
+        .candidate-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .candidate-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .candidate-card.selected {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.3);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f59e0b;
+            animation: confetti-fall 3s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        @keyframes winner-celebration {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(5deg); }
+            50% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.3) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        @keyframes rainbow-glow {
+            0% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+            16% { box-shadow: 0 0 30px rgba(255, 165, 0, 0.8); }
+            33% { box-shadow: 0 0 30px rgba(255, 255, 0, 0.8); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.8); }
+            66% { box-shadow: 0 0 30px rgba(0, 0, 255, 0.8); }
+            83% { box-shadow: 0 0 30px rgba(75, 0, 130, 0.8); }
+            100% { box-shadow: 0 0 30px rgba(238, 130, 238, 0.8); }
+        }
+        
+        .winner-card {
+            animation: winner-celebration 1s ease-in-out infinite, rainbow-glow 2s linear infinite;
+        }
+    </style>
+</head>
+<body class="h-full bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500">
+    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50"></div>
+    
+    <!-- Header -->
+    <header class="bg-white/90 backdrop-blur-sm shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-float">
+                        <span class="text-white font-bold text-xl">🏫</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">UPT SMPN 6 Gresik</h1>
+                        <p class="text-sm text-gray-600">Pemilihan Ketua OSIS 2025 / 2026</p>
+                    </div>
+                </div>
+                <button onclick="showAdminPanel()" class="bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    👨‍💼 Login Admin
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Voting Section -->
+        <div id="voting-section" class="animate-bounce-in">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-white mb-4 animate-pulse-glow">🗳️ PILIH CALON KETUA OSIS FAVORITMU!</h2>
+                <p class="text-xl text-white/90">Suaramu sangat berharga untuk masa depan OSIS SPENAGRES yang lebih baik</p>
+            </div>
+
+            <!-- Candidates -->
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Candidate 1 -->
+                <div class="candidate-card bg-white rounded-3xl p-6 shadow-xl" onclick="selectCandidate(1)">
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-gradient-to-r from-red-400 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center text-6xl animate-float">
+                            👨‍🎓
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">KAELA APSARI</h3>
+                        <p class="text-gray-600 mb-4">Kandidat 01</p>
+                        <div class="bg-red-50 rounded-2xl p-4 mb-4">
+                            <h4 class="font-bold text-red-600 mb-2">🎯 Visi:</h4>
+                            <p class="text-sm text-gray-700">Mewujudkan sekolah yang berprestasi tinggi berkarakter unggul, dan menjadi teladan dalam menjaga kebersihan melalui gerakan zero waste</p>
+                        </div>
+                        <div class="vote-indicator hidden bg-red-500 text-white py-2 px-4 rounded-full">
+                            ✓ Dipilih
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidate 2 -->
+                <div class="candidate-card bg-white rounded-3xl p-6 shadow-xl" onclick="selectCandidate(2)">
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full mx-auto mb-4 flex items-center justify-center text-6xl animate-float" style="animation-delay: 0.5s;">
+                            👩‍🎓
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">BRIAN AHMAD ELVARO</h3>
+                        <p class="text-gray-600 mb-4">Kandidat 02</p>
+                        <div class="bg-blue-50 rounded-2xl p-4 mb-4">
+                            <h4 class="font-bold text-blue-600 mb-2">🎯 Visi:</h4>
+                            <p class="text-sm text-gray-700">Mewujudkan lingkungan UPT SMPN 6 Gresik yang bersih, aman dan sejahtera, serta membentuk peserta didik yang berakhlakul karimah dan menjunjung tinggi nama baik sekolah</p>
+                        </div>
+                        <div class="vote-indicator hidden bg-blue-500 text-white py-2 px-4 rounded-full">
+                            ✓ Dipilih
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidate 3 -->
+                <div class="candidate-card bg-white rounded-3xl p-6 shadow-xl" onclick="selectCandidate(3)">
+                    <div class="text-center">
+                        <div class="w-32 h-32 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mx-auto mb-4 flex items-center justify-center text-6xl animate-float" style="animation-delay: 1s;">
+                            👨‍🎓
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">DZAKY FADHIL KHALFANI SENIAR</h3>
+                        <p class="text-gray-600 mb-4">Kandidat 03</p>
+                        <div class="bg-green-50 rounded-2xl p-4 mb-4">
+                            <h4 class="font-bold text-green-600 mb-2">🎯 Visi:</h4>
+                            <p class="text-sm text-gray-700">Menjadikan OSIS sebagai wadah yang kreatif, solid, dan inspiratif dalam mengembangkan potensi siswa serta meningkatkan prestasi dan semangat kebersamaan di sekolah</p>
+                        </div>
+                        <div class="vote-indicator hidden bg-green-500 text-white py-2 px-4 rounded-full">
+                            ✓ Dipilih
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vote Form -->
+            <div class="max-w-md mx-auto">
+                <form id="voteForm" class="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
+                    <h3 class="text-2xl font-bold text-center mb-6 text-gray-800">📝 Data Pemilih</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">Nama Panggilan</label>
+                            <input type="text" id="voterName" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">Kelas</label>
+                            <select id="voterClass" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors">
+                                <option value="">Pilih Kelas</option>
+                                <option value="7A">7A</option>
+                                <option value="7B">7B</option>
+                                <option value="7C">7C</option>
+                                <option value="7D">7D</option>
+                                <option value="7E">7E</option>
+                                <option value="7F">7F</option>
+                                <option value="7G">7G</option>
+                                <option value="7H">7H</option>
+                                <option value="8A">8A</option>
+                                <option value="8B">8B</option>
+                                <option value="8C">8C</option>
+                                <option value="8D">8D</option>
+                                <option value="8E">8E</option>
+                                <option value="8F">8F</option>
+                                <option value="9A">9A</option>
+                                <option value="9B">9B</option>
+                                <option value="9C">9C</option>
+                                <option value="9D">9D</option>
+                                <option value="9E">9E</option>
+                                <option value="9F">9F</option>
+                            </select>
+                        </div>
+                        
+                        <input type="hidden" id="selectedCandidate" value="">
+                        
+                        <button type="submit" id="submitVote" disabled class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                            🗳️ KIRIM SUARA SAYA!
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="admin-panel" class="hidden">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">📊 Panel - Hasil Voting</h2>
+                    <button onclick="hideAdminPanel()" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition-colors">
+                        ✕ Tutup
+                    </button>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-red-50 rounded-2xl p-6 text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-red-400 to-pink-500 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl" id="admin-photo-1">👩‍🎓</div>
+                        <h3 class="text-xl font-bold text-gray-800">KAELA APSARI</h3>
+                        <div class="text-3xl font-bold text-red-500 mt-2" id="votes-1">0</div>
+                        <p class="text-gray-600">suara</p>
+                        <div class="w-full bg-gray-200 rounded-full h-4 mt-4">
+                            <div class="bg-red-500 h-4 rounded-full transition-all duration-500" id="bar-1" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 rounded-2xl p-6 text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl" id="admin-photo-2">👨‍🎓</div>
+                        <h3 class="text-xl font-bold text-gray-800">BRIAN AHMAD ELVARO</h3>
+                        <div class="text-3xl font-bold text-blue-500 mt-2" id="votes-2">0</div>
+                        <p class="text-gray-600">suara</p>
+                        <div class="w-full bg-gray-200 rounded-full h-4 mt-4">
+                            <div class="bg-blue-500 h-4 rounded-full transition-all duration-500" id="bar-2" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 rounded-2xl p-6 text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mx-auto mb-3 flex items-center justify-center text-3xl" id="admin-photo-3">👨‍🎓</div>
+                        <h3 class="text-xl font-bold text-gray-800">DZAKY FADHIL KHALFANI SENIAR</h3>
+                        <div class="text-3xl font-bold text-green-500 mt-2" id="votes-3">0</div>
+                        <p class="text-gray-600">suara</p>
+                        <div class="w-full bg-gray-200 rounded-full h-4 mt-4">
+                            <div class="bg-green-500 h-4 rounded-full transition-all duration-500" id="bar-3" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mb-8">
+                    <div class="text-2xl font-bold text-gray-800 mb-2">Total Suara: <span id="total-votes">0</span></div>
+                    <button onclick="refreshResults()" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 mr-4">
+                        🔄 Refresh Data
+                    </button>
+                    <button onclick="showEditCandidates()" class="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 mr-4">
+                        ✏️ Edit Kandidat
+                    </button>
+                    <button onclick="celebrateWinner()" class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 mr-4">
+                        🎉 Hasil Voting!
+                    </button>
+                    <button onclick="resetVotingData()" class="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                        🗑️ Reset Data
+                    </button>
+                </div>
+                
+                <!-- Edit Candidates Section -->
+                <div id="edit-candidates" class="hidden bg-gray-50 rounded-2xl p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">✏️ Edit Foto Kandidat</h3>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <!-- Edit Candidate 1 -->
+                        <div class="bg-white rounded-xl p-4 text-center">
+                            <div class="w-24 h-24 bg-gradient-to-r from-red-400 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl" id="preview-1">
+                                👨‍🎓
+                            </div>
+                            <h4 class="font-bold text-gray-800 mb-2">KAELA APSARI</h4>
+                            <input type="text" id="emoji-1" placeholder="Masukkan emoji (👨‍🎓)" class="w-full px-3 py-2 border rounded-lg mb-2 text-center text-2xl">
+                            <button onclick="updateCandidatePhoto(1)" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors w-full">
+                                Update Foto
+                            </button>
+                        </div>
+                        
+                        <!-- Edit Candidate 2 -->
+                        <div class="bg-white rounded-xl p-4 text-center">
+                            <div class="w-24 h-24 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl" id="preview-2">
+                                👩‍🎓
+                            </div>
+                            <h4 class="font-bold text-gray-800 mb-2">BRIAN AHMAD ELVARO</h4>
+                            <input type="text" id="emoji-2" placeholder="Masukkan emoji (👩‍🎓)" class="w-full px-3 py-2 border rounded-lg mb-2 text-center text-2xl">
+                            <button onclick="updateCandidatePhoto(2)" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors w-full">
+                                Update Foto
+                            </button>
+                        </div>
+                        
+                        <!-- Edit Candidate 3 -->
+                        <div class="bg-white rounded-xl p-4 text-center">
+                            <div class="w-24 h-24 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mx-auto mb-4 flex items-center justify-center text-4xl" id="preview-3">
+                                👨‍🎓
+                            </div>
+                            <h4 class="font-bold text-gray-800 mb-2">DZAKY FADHIL KHALFANI SENIAR</h4>
+                            <input type="text" id="emoji-3" placeholder="Masukkan emoji (👨‍🎓)" class="w-full px-3 py-2 border rounded-lg mb-2 text-center text-2xl">
+                            <button onclick="updateCandidatePhoto(3)" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors w-full">
+                                Update Foto
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-6">
+                        <button onclick="hideEditCandidates()" class="bg-gray-500 text-white px-6 py-3 rounded-full hover:bg-gray-600 transition-colors">
+                            Selesai Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-3xl p-8 max-w-md mx-4 text-center animate-bounce-in">
+            <div class="text-6xl mb-4">🎉</div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Terima Kasih!</h3>
+            <p class="text-gray-600 mb-6">Suara Anda telah berhasil dikirim dan akan membantu menentukan ketua OSIS terbaik untuk UPT SMPN 6 Gresik!</p>
+            <button onclick="closeSuccessModal()" class="bg-gradient-to-r from-green-400 to-blue-500 text-white px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300">
+                Tutup
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedCandidateId = null;
+        let votes = { 1: 0, 2: 0, 3: 0 };
+
+        // Load votes from localStorage
+        function loadVotes() {
+            const savedVotes = localStorage.getItem('osisVotes');
+            if (savedVotes) {
+                votes = JSON.parse(savedVotes);
+            }
+        }
+
+        // Save votes to localStorage
+        function saveVotes() {
+            localStorage.setItem('osisVotes', JSON.stringify(votes));
+        }
+
+        // Select candidate
+        function selectCandidate(candidateId) {
+            // Remove previous selection
+            document.querySelectorAll('.candidate-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('.vote-indicator').classList.add('hidden');
+            });
+
+            // Add selection to clicked candidate
+            const selectedCard = document.querySelectorAll('.candidate-card')[candidateId - 1];
+            selectedCard.classList.add('selected');
+            selectedCard.querySelector('.vote-indicator').classList.remove('hidden');
+
+            selectedCandidateId = candidateId;
+            document.getElementById('selectedCandidate').value = candidateId;
+            document.getElementById('submitVote').disabled = false;
+
+            // Add bounce effect
+            selectedCard.style.animation = 'bounce-in 0.6s ease-out';
+            setTimeout(() => {
+                selectedCard.style.animation = '';
+            }, 600);
+        }
+
+        // Handle form submission
+        document.getElementById('voteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const voterName = document.getElementById('voterName').value;
+            const voterClass = document.getElementById('voterClass').value;
+            const candidate = selectedCandidateId;
+
+            if (!candidate) {
+                alert('Silakan pilih kandidat terlebih dahulu!');
+                return;
+            }
+
+            // Simulate sending to Google Forms
+            // In real implementation, you would send this data to your Google Form endpoint
+            const formData = {
+                nama: voterName,
+                kelas: voterClass,
+                pilihan: candidate,
+                timestamp: new Date().toISOString()
+            };
+
+            // Update local vote count
+            votes[candidate]++;
+            saveVotes();
+
+            // Send notification to admin (simulate)
+            sendToAdmin(formData);
+
+            // Show success modal with confetti
+            showSuccessModal();
+            createConfetti();
+
+            // Reset form
+            document.getElementById('voteForm').reset();
+            document.querySelectorAll('.candidate-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('.vote-indicator').classList.add('hidden');
+            });
+            selectedCandidateId = null;
+            document.getElementById('submitVote').disabled = true;
+
+            console.log('Vote data (would be sent to Google Forms):', formData);
+        });
+
+        // Show success modal
+        function showSuccessModal() {
+            document.getElementById('success-modal').classList.remove('hidden');
+        }
+
+        // Close success modal
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+        }
+
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#f59e0b', '#ef4444', '#3b82f6', '#10b981', '#8b5cf6'];
+            const confettiContainer = document.getElementById('confetti-container');
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confettiContainer.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Show admin panel
+        function showAdminPanel() {
+            const adminPassword = prompt('Masukkan password admin:');
+            if (adminPassword === 'admin123') {
+                document.getElementById('voting-section').classList.add('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                updateAdminResults();
+                // Enable admin notifications
+                window.isAdminMode = true;
+            } else if (adminPassword !== null) {
+                alert('Password salah! Hanya admin yang dapat mengakses panel ini.');
+            }
+        }
+
+        // Hide admin panel
+        function hideAdminPanel() {
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('voting-section').classList.remove('hidden');
+            window.isAdminMode = false;
+        }
+
+        // Show edit candidates section
+        function showEditCandidates() {
+            document.getElementById('edit-candidates').classList.remove('hidden');
+            // Load current photos
+            loadCandidatePhotos();
+        }
+
+        // Hide edit candidates section
+        function hideEditCandidates() {
+            document.getElementById('edit-candidates').classList.add('hidden');
+        }
+
+        // Load candidate photos from localStorage
+        function loadCandidatePhotos() {
+            const savedPhotos = localStorage.getItem('candidatePhotos');
+            if (savedPhotos) {
+                const photos = JSON.parse(savedPhotos);
+                for (let i = 1; i <= 3; i++) {
+                    if (photos[i]) {
+                        document.getElementById(`preview-${i}`).textContent = photos[i];
+                        document.getElementById(`emoji-${i}`).value = photos[i];
+                        // Update main candidate cards
+                        updateMainCandidatePhoto(i, photos[i]);
+                        // Update admin panel photos
+                        const adminPhoto = document.getElementById(`admin-photo-${i}`);
+                        if (adminPhoto) {
+                            adminPhoto.textContent = photos[i];
+                        }
+                    }
+                }
+            }
+        }
+
+        // Update candidate photo
+        function updateCandidatePhoto(candidateId) {
+            const newEmoji = document.getElementById(`emoji-${candidateId}`).value.trim();
+            
+            if (!newEmoji) {
+                alert('Silakan masukkan emoji terlebih dahulu!');
+                return;
+            }
+
+            // Update preview
+            document.getElementById(`preview-${candidateId}`).textContent = newEmoji;
+            
+            // Update main candidate card
+            updateMainCandidatePhoto(candidateId, newEmoji);
+            
+            // Save to localStorage
+            saveCandidatePhotos(candidateId, newEmoji);
+            
+            alert('Foto kandidat berhasil diupdate!');
+        }
+
+        // Update main candidate photo in voting section
+        function updateMainCandidatePhoto(candidateId, emoji) {
+            const candidateCards = document.querySelectorAll('.candidate-card');
+            const targetCard = candidateCards[candidateId - 1];
+            const photoElement = targetCard.querySelector('.w-32.h-32');
+            photoElement.textContent = emoji;
+            
+            // Also update admin panel photo
+            const adminPhoto = document.getElementById(`admin-photo-${candidateId}`);
+            if (adminPhoto) {
+                adminPhoto.textContent = emoji;
+            }
+        }
+
+        // Save candidate photos to localStorage
+        function saveCandidatePhotos(candidateId, emoji) {
+            let savedPhotos = localStorage.getItem('candidatePhotos');
+            let photos = savedPhotos ? JSON.parse(savedPhotos) : {};
+            photos[candidateId] = emoji;
+            localStorage.setItem('candidatePhotos', JSON.stringify(photos));
+        }
+
+        // Update admin results
+        function updateAdminResults() {
+            const total = votes[1] + votes[2] + votes[3];
+            
+            document.getElementById('votes-1').textContent = votes[1];
+            document.getElementById('votes-2').textContent = votes[2];
+            document.getElementById('votes-3').textContent = votes[3];
+            document.getElementById('total-votes').textContent = total;
+
+            // Update progress bars
+            if (total > 0) {
+                document.getElementById('bar-1').style.width = (votes[1] / total * 100) + '%';
+                document.getElementById('bar-2').style.width = (votes[2] / total * 100) + '%';
+                document.getElementById('bar-3').style.width = (votes[3] / total * 100) + '%';
+            }
+        }
+
+        // Refresh results (simulate fetching from Google Sheets)
+        function refreshResults() {
+            // In real implementation, this would fetch data from Google Sheets API
+            // For demo purposes, we'll just update the display
+            updateAdminResults();
+            
+            // Show refresh animation
+            const button = event.target;
+            button.innerHTML = '🔄 Memuat...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = '🔄 Refresh Data';
+                button.disabled = false;
+            }, 1000);
+        }
+
+        // Send vote data to admin
+        function sendToAdmin(voteData) {
+            // Simulate sending to admin via email/notification
+            // In real implementation, this would send to Google Forms or admin email
+            console.log('📧 Mengirim notifikasi ke admin:', voteData);
+            
+            // Show admin notification
+            showAdminNotification(voteData);
+        }
+
+        // Show admin notification
+        function showAdminNotification(voteData) {
+            // Only show notification if admin is logged in
+            if (!window.isAdminMode) return;
+            
+            const candidateNames = {
+                1: 'KAELA APSARI',
+                2: 'BRIAN AHMAD ELVARO', 
+                3: 'DZAKY FADHIL KHALFANI SENIAR'
+            };
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50 animate-bounce-in';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">📧</span>
+                    <div>
+                        <div class="font-bold">Suara Baru Masuk!</div>
+                        <div class="text-sm">${voteData.nama} (${voteData.kelas}) memilih ${candidateNames[voteData.pilihan]}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Celebrate winner function
+        function celebrateWinner() {
+            const total = votes[1] + votes[2] + votes[3];
+            
+            if (total === 0) {
+                alert('Belum ada suara yang masuk! Tidak ada pemenang untuk dirayakan.');
+                return;
+            }
+            
+            // Find winner
+            let winnerId = 1;
+            let maxVotes = votes[1];
+            
+            if (votes[2] > maxVotes) {
+                winnerId = 2;
+                maxVotes = votes[2];
+            }
+            if (votes[3] > maxVotes) {
+                winnerId = 3;
+                maxVotes = votes[3];
+            }
+            
+            // Check for tie
+            const tieCount = Object.values(votes).filter(v => v === maxVotes).length;
+            if (tieCount > 1) {
+                alert('Ada seri! Beberapa kandidat memiliki suara yang sama. Tunggu hingga ada pemenang yang jelas.');
+                return;
+            }
+            
+            const candidateNames = {
+                1: 'KAELA APSARI',
+                2: 'BRIAN AHMAD ELVARO',
+                3: 'DZAKY FADHIL KHALFANI SENIAR'
+            };
+            
+            // Create celebration modal
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/70 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-gradient-to-br from-yellow-300 via-orange-400 to-red-500 rounded-3xl p-8 max-w-lg mx-4 text-center animate-bounce-in winner-card">
+                    <div class="text-8xl mb-4 animate-bounce">🏆</div>
+                    <h2 class="text-4xl font-bold text-white mb-4 drop-shadow-lg">SELAMAT!</h2>
+                    <div class="bg-white/90 rounded-2xl p-6 mb-6">
+                        <div class="text-6xl mb-4" id="winner-photo">${getWinnerPhoto(winnerId)}</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${candidateNames[winnerId]}</h3>
+                        <p class="text-lg text-gray-600 mb-2">Ketua OSIS Terpilih</p>
+                        <div class="text-3xl font-bold text-orange-600">${maxVotes} Suara</div>
+                        <div class="text-sm text-gray-500">${((maxVotes/total)*100).toFixed(1)}% dari total suara</div>
+                    </div>
+                    <div class="text-white text-lg mb-6 drop-shadow">
+                        🎊 Terima kasih kepada semua siswa yang telah berpartisipasi! 🎊
+                    </div>
+                    <button onclick="closeCelebration()" class="bg-white text-orange-600 font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        Tutup Perayaan
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Create massive confetti
+            createMassiveConfetti();
+            
+            // Play celebration sound effect (visual representation)
+            createSoundWaves();
+            
+            // Store modal reference for closing
+            window.celebrationModal = modal;
+        }
+        
+        // Get winner photo
+        function getWinnerPhoto(winnerId) {
+            const savedPhotos = localStorage.getItem('candidatePhotos');
+            if (savedPhotos) {
+                const photos = JSON.parse(savedPhotos);
+                return photos[winnerId] || (winnerId === 1 ? '👨‍🎓' : winnerId === 2 ? '👩‍🎓' : '👨‍🎓');
+            }
+            return winnerId === 1 ? '👨‍🎓' : winnerId === 2 ? '👩‍🎓' : '👨‍🎓';
+        }
+        
+        // Close celebration modal
+        function closeCelebration() {
+            if (window.celebrationModal) {
+                window.celebrationModal.remove();
+                window.celebrationModal = null;
+            }
+        }
+        
+        // Create massive confetti for winner
+        function createMassiveConfetti() {
+            const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+            const confettiContainer = document.getElementById('confetti-container');
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 5 + 's';
+                confetti.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                confetti.style.width = (Math.random() * 15 + 5) + 'px';
+                confetti.style.height = confetti.style.width;
+                confettiContainer.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 8000);
+            }
+            
+            // Add special shapes
+            for (let i = 0; i < 20; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'confetti';
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.animationDelay = Math.random() * 3 + 's';
+                shape.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                shape.style.fontSize = '20px';
+                shape.innerHTML = ['🎉', '🎊', '⭐', '🌟', '💫', '🏆'][Math.floor(Math.random() * 6)];
+                confettiContainer.appendChild(shape);
+                
+                setTimeout(() => {
+                    shape.remove();
+                }, 8000);
+            }
+        }
+        
+        // Create sound wave visual effect
+        function createSoundWaves() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const wave = document.createElement('div');
+                    wave.className = 'fixed inset-0 pointer-events-none z-40';
+                    wave.style.border = '3px solid rgba(255, 215, 0, 0.3)';
+                    wave.style.borderRadius = '50%';
+                    wave.style.animation = 'sound-wave 2s ease-out forwards';
+                    
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes sound-wave {
+                            0% { 
+                                transform: scale(0); 
+                                opacity: 1; 
+                            }
+                            100% { 
+                                transform: scale(3); 
+                                opacity: 0; 
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    document.body.appendChild(wave);
+                    
+                    setTimeout(() => {
+                        wave.remove();
+                        style.remove();
+                    }, 2000);
+                }, i * 400);
+            }
+        }
+
+        // Reset voting data
+        function resetVotingData() {
+            const confirmReset = confirm('⚠️ PERINGATAN!\n\nApakah Anda yakin ingin menghapus SEMUA data voting?\n\nTindakan ini tidak dapat dibatalkan dan akan:\n• Menghapus semua suara yang sudah masuk\n• Mengatur ulang hitungan ke 0\n• Menghapus riwayat pemilih\n\nKlik OK untuk melanjutkan atau Cancel untuk membatalkan.');
+            
+            if (confirmReset) {
+                const doubleConfirm = confirm('🚨 KONFIRMASI TERAKHIR!\n\nAnda akan menghapus SEMUA data voting!\n\nApakah Anda benar-benar yakin?');
+                
+                if (doubleConfirm) {
+                    // Reset vote counts
+                    votes = { 1: 0, 2: 0, 3: 0 };
+                    
+                    // Clear localStorage
+                    localStorage.removeItem('osisVotes');
+                    
+                    // Update display
+                    updateAdminResults();
+                    
+                    // Show success notification
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed top-20 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50 animate-bounce-in';
+                    notification.innerHTML = `
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xl">✅</span>
+                            <div>
+                                <div class="font-bold">Data Berhasil Direset!</div>
+                                <div class="text-sm">Semua data voting telah dihapus</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(notification);
+                    
+                    // Remove notification after 3 seconds
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3000);
+                    
+                    console.log('🗑️ Data voting telah direset oleh admin');
+                }
+            }
+        }
+
+        // Initialize
+        loadVotes();
+        loadCandidatePhotos();
+        
+        // Auto-refresh admin panel every 30 seconds if visible
+        setInterval(() => {
+            if (!document.getElementById('admin-panel').classList.contains('hidden')) {
+                updateAdminResults();
+            }
+        }, 30000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98dcc8af25f4ff83',t:'MTc2MDMzNjk4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
